@@ -1,0 +1,345 @@
+<style>
+table, th, td {
+	border: 1px solid black;
+	padding: 4px;
+}
+td.temp {
+	text-align: center
+}
+
+td.text {
+	text-align: left
+}
+
+td.date {
+	text-align: center
+}
+
+td.nr {
+	text-align: center
+}
+
+body {
+	background-image: url("golf-background2.jpg")
+}
+span.margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+p.p_margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+span.s01 {
+	background-color:#f1f8e9;
+    border-style: none;
+	max-width:100px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+	}
+
+div.d01 {
+	background-color:#f1f8e2;
+    border-style: none;
+	max-width:650px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+	}
+
+	
+div.all_margins_d01 {
+	margin-left: 50px;
+	margin-bottom: 50px;
+	border-style: none;
+	background-color:#e8f5e9;
+    max-width:700px;
+	padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+	
+h3.h03 {
+	background-color:#f1f8e9;
+    border-style: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+	
+div.all_margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+h1 {
+    text-align: center;
+	display: inline;
+}
+h1 span {
+	background-color: #000000;
+}
+
+p.none {
+	border-style: none;
+}
+
+</style>
+
+<body ng-controller="courseController">
+  <div class="all_margins_d01" ng-hide="hideCourses">
+	<p></p>
+	<p>Add a new course: <button name="newCourse" ng-click="initCourseEdit()">New course</button>
+	<br>
+	<p></p>
+	<table>
+		<tr style="width:100%">
+			<th>Name</th>
+			<th>Abbr.</th>
+			<th>Location</th> 
+			<th>Par</th>
+			<th>Slope</th>
+			<th>CR</th>
+		</tr>
+		<tr ng-repeat="course in courses.data track by $index">
+			<td class="text">{{course.CourseName}}</td>
+			<td class="text">{{course.Abbreviation}}</td>
+			<td class="text">{{course.Location}}</td>
+			<td class="temp">{{course.CoursePar}}</td>
+			<td class="text">{{course.CourseSlope}}</td>
+			<td class="text">{{course.CR}}</td>
+			<td><button name="showCourse" ng-click="showCourseHoles(courses.data.indexOf(course))" data-toggle="modal" data-target="#showC">Show</button></td>
+			<!-- <button name="editCourse" ng-click="editCourse(courses.data.indexOf(course))">Edit</button> -->
+		</tr>
+	</table>
+  </div> <!-- end of course list -->
+  
+  <div class="modal fade" visible="showModal" id="showC">
+	<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title">{{courses.data[ind].CourseName}}</h3>
+        </div>
+        <div class="modal-body">
+
+		<!-- This is the table header for general course data, everything not repeated here -->
+		<table>
+			<tr style="width:100%">
+				<th>Abbreviation</th>
+				<th>Par</th> 
+				<th>Front 9</th>
+				<th>Back 9</th>				
+			</tr>
+			<tr>
+				<td class="temp">{{courses.data[ind].Abbreviation}}
+				<td class="temp">{{courses.data[ind].CoursePar}}</td>
+				<td class="temp">{{courses.data[ind].Front9Par}}</td>
+				<td class="temp">{{courses.data[ind].Back9Par}}</td>
+			</tr>
+		</table>
+
+		<!-- This is the table for the holes -->
+		<table>
+		<br>
+			<tr style="width:100%">
+				<th>Hole</th>
+				<th>Par</th>
+				<th>HCP</th>
+			</tr>
+			<tr ng-repeat="hole in courseholes.data">
+				<td class="nr">{{hole.HoleNr}}</td>
+				<td class="nr">{{hole.HolePar}}</td>
+				<td class="nr">{{hole.HoleHCP}}</td>
+				<!-- Remove the old modal buttons from the new modal window  
+				<td><button name="showScore" ng-click="toggleModal($index)" data-toggle="modal" data-target="#showC">Show</button>
+				 <button name="editScore">Edit</button>
+				</td> -->
+			</tr>
+		</table>
+
+        </div> <!-- end of modal body -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+  </div>	<!-- end of modal -->
+  
+  <!-- adding new course -->
+  <div class="all_margins_d01" ng-hide="!hideCourses">
+
+	<!-- type in general data of a course -->
+	<p>Store first general information on the course. Table of holes will show up after that.</p>
+	<p></p>
+	<table>
+		<tr>
+			<th>Item</th>
+			<th>Value</th>
+		</tr>
+		<tr>
+			<td>Name of the course (max 45 chars)</td>
+			<td><input type="text" ng-model="newName"></td>
+		</tr>
+		<tr>
+			<td>Abbreviation (5 chars)</td>
+			<td><input type="text" ng-model="newAbbr"></td>
+		</tr>
+		<tr>
+			<td>Location (max 45 chars)</td>				
+			<td><input type="text" ng-model="newLocation"></td>
+		</tr>
+		<tr>
+			<td>Par</td>
+			<td><input type="number" ng-model="newPar"></td>
+		</tr>
+		<tr>
+			<td>Front 9</td> 
+			<td><input type="number" ng-model="newFront9"></td>
+		</tr>
+		<tr>
+			<td>Back 9</td>
+			<td><input type="number" ng-model="newBack9"></td>
+		</tr>
+		<tr>
+			<td>Slope</td>
+			<td><input type="number" ng-model="newSlope"></td>
+		</tr>
+		<tr>
+			<td>CR</td>
+			<td><input type="number" ng-model="newCR"></td>
+		</tr>
+	</table>
+	<p><input type="submit" ng-hide="courseStored" ng-click="storeNewCourse()" value="Store new course" />
+	<input type="button" ng-click="cancelNewCourse()" value="Cancel" /></p>
+  </div>
+  
+	<!-- insert new holes -->
+  <div class="all_margins_d01" ng-hide="!courseStored">
+	<form name="insHoles">
+	  <table>
+		<tr>
+			<th>Hole nr.</th>
+			<th>Name (e.g. NRG1)</th>
+			<th>Par</th>
+			<th>HCP</th>
+		</tr>
+		<tr>
+			<td>{{newHole[0].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[0].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[0].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[0].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[1].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[1].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[1].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[1].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[2].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[2].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[2].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[2].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[3].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[3].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[3].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[3].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[4].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[4].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[4].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[4].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[5].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[5].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[5].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[5].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[6].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[6].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[6].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[6].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[7].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[7].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[7].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[7].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[8].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[8].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[8].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[8].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[9].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[9].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[9].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[9].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[10].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[10].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[10].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[10].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[11].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[11].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[11].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[11].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[12].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[12].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[12].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[12].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[13].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[13].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[13].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[13].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[14].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[14].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[14].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[14].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[15].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[15].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[15].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[15].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[16].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[16].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[16].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[16].HoleHCP" required></td>
+		</tr>
+		<tr>
+			<td>{{newHole[17].HoleNr}}</td>
+			<td><input type="text" style="width: 200px;" ng-model="newHole[17].HoleName" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[17].HolePar" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="newHole[17].HoleHCP" required></td>
+		</tr>
+	
+	  </table> <!-- end of inserting new holes -->
+		<p><input type="submit" ng-click="storeHoles()" value="Store holes" />
+		<input type="button" ng-click="cancelHoles()" value="Cancel" /></p>
+	</form> <!-- end of inserting new holes -->
+
+  </div>  <!-- end of inserting new holes -->
+</body>

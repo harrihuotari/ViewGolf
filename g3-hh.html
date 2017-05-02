@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html ng-app="routeApp" ng-init="pid=1; eid=2;scorefilter=12;hideVar=true;courseStored=false;scoreCardReady=false;hideCourses=false;hideEvents=false;hideSummary=true;hideNewEvent=true;hideScoreCard=true;hidePlayersRound=true;readyToFillScoreCard=false;change=false">
+
+
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+ 	<!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
+
+	<script src="g3-hh-route.js"></script>
+
+<title>An practical work WAP course. Golf UI application with routing & REST API.</title>
+<style>
+a.texts {
+	margin-left:5px;
+	margin-top:70px;
+	padding-left: 20px
+	background-color:#f1f8e2;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+a.texts2 {
+	margin-left:50px;
+	margin-top:50px;
+	padding-left: 20px
+	background-color:#f1f8e2;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<p><a href="http://home.tamk.fi/~c6hhuota/g3-hh.html" class="texts2">Main  </a>  
+<a class="texts" href="#/event">Events  </a>  
+<a class="texts" href="#/player">Players  </a>  
+<a class="texts" href="#/round">Results  </a> 
+<a class="texts" href="#/newscore">New score </a>
+<a class="texts" href="#/courses">Courses</a></p>
+<div ng-view></div>
+
+</body>
+
+</html>

@@ -1,0 +1,587 @@
+<style>
+table, th, td {
+	border: 1px solid black;
+	padding: 4px;
+}
+td.temp {
+	text-align: center
+}
+
+td.sco {
+	width: 15px
+}
+
+th.scor {
+	width: 15px
+}
+
+td.text {
+	text-align: left
+}
+
+td.date {
+	text-align: center
+}
+
+td.nr {
+	text-align: center
+}
+
+body {
+	background-image: url("golf-background2.jpg")
+}
+span.margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+p.p_margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+span.s01 {
+	background-color:#f1f8e9;
+    border-style: none;
+	max-width:100px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+	}
+
+div.d01 {
+	background-color:#f1f8e2;
+    border-style: none;
+	max-width:650px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+	}
+	
+h3.h03 {
+	background-color:#f1f8e9;
+    border-style: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+	
+div.all_margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+	
+div.all_margins_d01 {
+	margin-left: 50px;
+	margin-bottom: 50px;
+	border-style: none;
+	background-color:#e8f5e9;
+    max-width:500px;
+	padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+
+	
+div.all_margins_d03 {
+	margin-left: 50px;
+	margin-bottom: 0px;
+	border-style: none;
+	background-color:#e8f5e9;
+    max-width:500px;
+	padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+
+h1 {
+    text-align: center;
+	display: inline;
+}
+h1 span {
+	background-color: #000000;
+}
+
+p.none {
+	border-style: none;
+}
+
+</style>
+
+<body ng-controller="newscoreController">
+    <p></p>
+    <div class="all_margins_d01" ng-hide="(!hidePlayersRound || !hideNewEvent || !hideScoreCard || !hideSummary)">
+		<p>Select event:</p>
+		<select ng-model="selectedRoundName">  
+			<option ng-repeat="event in roundevents.data track by $index" value="{{event.RoundName}}" size="45">{{event.RoundName}}</option>
+		</select>
+		<button name="eEvent" ng-click="initPlayersRound()">Select event</button>
+		<p></p>
+		<p> or create new event first: <button name="inEvent" ng-click="initNewEvent()">New event</button>
+		</p>
+    </div>
+	<p></p>
+	<p></p>
+	<p></p>
+	<p></p>
+	<p></p>
+	<p></p>
+	
+
+	<!-- Inserting new player's round on top of existing round event  -->
+	<div class="all_margins_d01" ng-hide="hidePlayersRound">
+	<table ng-hide="hidePlayersRound">
+
+	<tr style="width:100%">
+			<th>Item</th>
+			<th>Value</th>
+		</tr>
+		<tr>
+			<td class="text">Tee time</td>
+			<td><input placeholder="hh:mm" ng-model="teeTime"></td>
+		</tr>
+		<tr>
+			<td class="text">Player's name</td>
+			<td><select ng-model="selectedPlayerName"><option ng-repeat="player in players.data">{{player.Fname}} {{player.Lname}}</td>
+		</tr>
+		<!-- Check if enough to use only one selector for name
+		<tr>
+			<td class="text">Player's lastname</td>
+			<td><select ng-model="selectedPlayerLname"><option ng-repeat="player in players.data">{{player.Lname}}</td>
+		</tr> -->
+		<tr>
+			<td class="text">Exact HCP with one decimal</td>
+			<td><input type="number" ng-model="exactHCP"></td>
+		</tr>
+	</table>
+	<br>
+	<button ng-hide="hidePlayersRound" name="prEvent" ng-click="storeRoundInfo()">Store round data</button>
+	<button ng-hide="hidePlayersRound" name="canceling" ng-click="initialize()">Cancel</button>
+	</div>  <!-- end of all_margins_d01 -->
+	
+	<!-- Inserting an event -->
+	<div class="all_margins_d03" ng-hide="hideNewEvent">
+	<table ng-hide="hideNewEvent">
+		<tr style="width:100%">
+			<th>Item</th>
+			<th>Value</th>
+		</tr>
+		<tr>
+			<td class="text">Descripton of the round</td>
+			<td><input placeholder="optional info" ng-model="RoundName"></td>
+		</tr>
+		<tr>
+			<td class="text">Date</td>
+			<td><input placeholder="yyyy-mm-dd" ng-model="dateWhen"></td>
+		</tr>
+		<tr>
+			<td class="text">Tee time</td>
+			<td><input placeholder="hh:mm" ng-model="teeTime"></td>
+		</tr>
+		<tr>
+			<td class="text">Course</td>
+			<td><select ng-model="selectedCourseName"><option ng-repeat="course in courses.data">{{course.CourseName}}</td>
+		</tr>
+		<tr>
+			<td class="text">Player's name</td>
+			<td><select ng-model="selectedPlayerName"><option ng-repeat="player in players.data">{{player.Fname}} {{player.Lname}}</td>
+		</tr>
+		<!-- 
+		<tr>
+			<td class="text">Player's lastname</td>
+			<td><select ng-model="selectedPlayerLname"><option ng-repeat="player in players.data">{{player.Lname}}</td>
+		</tr>  -->
+		<tr>
+			<td class="text">Exact HCP with one decimal</td>
+			<td><input type="number" ng-model="exactHCP"></td>
+		</tr>
+		<tr>
+			<td class="text">Temperature</td>
+			<td><input type="number" placeholder="optional" ng-model="Temperature"></td>
+		</tr>
+		<tr>
+			<td class="text">Rain (%)</td>
+			<td><input type="number" placeholder="optional" ng-model="Rain"></td>
+		</tr>
+		<tr>
+			<td class="text">Sun (%)</td>
+			<td><input type="number" placeholder="optional" ng-model="Sun"></td>
+		</tr>
+		<tr>
+			<td class="text">Wind speed(number)</td>
+			<td><input type="number" placeholder="optional" ng-model="Wind"></td>
+		</tr>
+		<tr>
+			<td class="text">Wind direction (e.g. SW)</td>
+			<td><input type="text" placeholder="optional" ng-maxlength="2" ng-model="WindDirection"></td>
+		</tr>
+	</table>
+	<br>
+	<button ng-hide="hideNewEvent" name="nEvent" ng-click="storeNewEvent(RoundName, dateWhen, Temperature, Rain, Sun, Wind, WindDirection, 1)">Store event</button>
+	<button ng-hide="hideNewEvent" name="canc" ng-click="initialize()">Cancel</button>
+	</div> <!-- end of all_margins_d03. Bottom margin 0px. -->
+	
+	<!-- Filling in a score card  -->
+	<div class="all_margins_d03" ng-hide="hideScoreCard || (!hideSummary)">
+	<table ng-hide="hideScoreCard || (!hideSummary)"> 
+		<tr>
+			<th>Name</th>
+			<th>Date</th>
+			<th>Tee time</th>
+			<th>Course name     </th>
+		</tr>
+		<tr>
+			<td>{{selectedPlayerName}}</td>
+			<!-- <td>{{selectedPlayerLname}}</td> -->
+			<td>{{dateWhen}}</td>
+			<td>{{teeTime}}</td>
+			<td>{{selectedCourseName}}</td>
+		</tr>
+	</table>
+	<p></p>
+	</div> <!-- end of all_margins_d01 -->
+	<div class="all_margins_d01" ng-hide="hideScoreCard">
+	<form name="scoCard" ng-hide="hideScoreCard">
+		<table>
+		<tr>
+			<th>Hole</th>
+			<th>Par</th>
+			<th>HCP</th>
+			<th>Score</th>
+			<th>Putts</th>
+			<th>FW</th>
+			<th>GH</th>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[0].hole}}</td>
+			<td class="nr">{{scard[0].par}}</td>
+			<td class="nr">{{scard[0].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[0].score" required></td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[0].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[0].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[0].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[1].hole}}</td>
+			<td class="nr">{{scard[1].par}}</td>
+			<td class="nr">{{scard[1].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[1].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[1].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[1].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[1].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[2].hole}}</td>
+			<td class="nr">{{scard[2].par}}</td>
+			<td class="nr">{{scard[2].hcp}}</td>
+			<td><input type="number" style="width: 75px;" 
+			ng-model="scard[2].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[2].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[2].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[2].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[3].hole}}</td>
+			<td class="nr">{{scard[3].par}}</td>
+			<td class="nr">{{scard[3].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[3].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[3].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[3].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[3].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[4].hole}}</td>
+			<td class="nr">{{scard[4].par}}</td>
+			<td class="nr">{{scard[4].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[4].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[4].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[4].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[4].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[5].hole}}</td>
+			<td class="nr">{{scard[5].par}}</td>
+			<td class="nr">{{scard[5].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[5].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[5].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[5].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[5].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[6].hole}}</td>
+			<td class="nr">{{scard[6].par}}</td>
+			<td class="nr">{{scard[6].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[6].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[6].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[6].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[6].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[7].hole}}</td>
+			<td class="nr">{{scard[7].par}}</td>
+			<td class="nr">{{scard[7].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[7].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[7].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[7].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[7].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[8].hole}}</td>
+			<td class="nr">{{scard[8].par}}</td>
+			<td class="nr">{{scard[8].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[8].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[8].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[8].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[8].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[9].hole}}</td>
+			<td class="nr">{{scard[9].par}}</td>
+			<td class="nr">{{scard[9].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[9].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[9].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[9].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[9].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[10].hole}}</td>
+			<td class="nr">{{scard[10].par}}</td>
+			<td class="nr">{{scard[10].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[10].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[10].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[10].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[10].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[11].hole}}</td>
+			<td class="nr">{{scard[11].par}}</td>
+			<td class="nr">{{scard[11].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[11].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[11].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[11].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[11].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[12].hole}}</td>
+			<td class="nr">{{scard[12].par}}</td>
+			<td class="nr">{{scard[12].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[12].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[12].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[12].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[12].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[13].hole}}</td>
+			<td class="nr">{{scard[13].par}}</td>
+			<td class="nr">{{scard[13].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[13].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[13].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[13].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[13].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[14].hole}}</td>
+			<td class="nr">{{scard[14].par}}</td>
+			<td class="nr">{{scard[14].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[14].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[14].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[14].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[14].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[15].hole}}</td>
+			<td class="nr">{{scard[15].par}}</td>
+			<td class="nr">{{scard[15].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[15].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[15].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[15].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[15].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[16].hole}}</td>
+			<td class="nr">{{scard[16].par}}</td>
+			<td class="nr">{{scard[16].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[16].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[16].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[16].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[16].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="nr">{{scard[17].hole}}</td>
+			<td class="nr">{{scard[17].par}}</td>
+			<td class="nr">{{scard[17].hcp}}</td>
+			<td><input type="number" style="width: 75px;" ng-model="scard[17].score" required></td>
+			<td><input type="number" placeholder="optional" style="width: 75px;" ng-model="scard[17].putts"></td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[17].fw">
+				<option value="1">Y</option><option value="0">N</option>
+				</select>
+			</td>
+			<td><select placeholder="Y/N" style="width: 70px;" ng-model="scard[17].gh">
+				<option value="1">Y<option value="0">N</option>
+				</select>
+			</td>
+		</tr>
+		</table>
+		
+		<p></p>
+		<input type="submit" ng-click="storeScoreCard()" value="Store score card" />
+		<input type="button" ng-click="initialize()" value="Cancel" />
+	</form>
+	<p></p>
+	<div ng-hide="!scoreCardReady">
+		<input type="button" ng-click="initialize()" value="Exit" />
+	</div>
+	</div>  <!-- end of all_margins_d01 -->
+	
+	
+	<!-- This is the table for the summary of the scores after storing done -->
+	<div class="all_margins_d01" ng-hide="hideSummary">
+	<table>
+	<br>
+		<tr style="width:100%">
+			<th>Hole</th>
+			<th>Par</th>
+			<th>HCP</th>
+			<th>Score</th>
+			<th>BP</th>
+			<th>Putts</th>
+			<th>FW</th>
+			<th>GH</th>
+		</tr>
+		<tr ng-repeat="score in holescores.data track by $index">
+			<td class="nr">{{score.Hole}}</td>
+			<td class="nr">{{score.Par}}</td>
+			<td class="nr">{{score.HCP}}</td>
+			<td class="nr">{{score.Score}}</td>
+			<td class="nr">{{score.BP}}</td>
+			<td class="nr">{{scard[holescores.data.indexOf(score)].putts}}
+			<td class="nr">{{scard[holescores.data.indexOf(score)].fw}}
+			<td class="nr">{{scard[holescores.data.indexOf(score)].gh}}
+			</tr>
+	</table>
+	<p></p>
+	<table>
+		<tr>
+		<th>Total score</th>
+		<th>Bogey points</th>
+		<th>Putts</th>
+		<th>Fairways</th>
+		<th>Green hits</th>
+		</tr>
+		<tr>
+		<td>{{sumScore}}</td>
+		<td>{{sumBP}}</td>
+		<td>{{sumPutts}}</td>
+		<td>{{sumFW}}</td>
+		<td>{{sumGH}}</td>
+		</tr>
+	</table>
+	<p></p>
+	<input type="button" ng-click="initialize()" value="exit">
+	</div>
+
+</body>

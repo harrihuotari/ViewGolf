@@ -1,0 +1,189 @@
+<style>
+table, th, td {
+	border: 1px solid black;
+	padding: 4px;
+}
+td.temp {
+	text-align: center
+}
+
+td.txt {
+	text-align: left
+}
+
+td.date {
+	text-align: center
+}
+
+td.nr {
+	text-align: center
+}
+
+body {
+	background-image: url("golf-background2.jpg")
+}
+span.margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+p.p_margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+span.s01 {
+	background-color:#f1f8e9;
+    border-style: none;
+	max-width:100px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+	}
+	
+div.d01 {
+	border-style: none;
+	background-color:#e8f5e9;
+    max-width:750px;
+	padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+	}
+	
+h3.h03 {
+	background-color:#f1f8e9;
+    border-style: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+	
+div.all_margins_d01 {
+	margin-left: 50px;
+	margin-bottom: 50px;
+	border-style: none;
+	background-color:#e8f5e9;
+    max-width:750px;
+	padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+
+div.all_margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+h1 {
+    text-align: center;
+	display: inline;
+}
+h1 span {
+	background-color: #000000;
+}
+
+p.none {
+	border-style: none;
+}
+
+</style>
+
+<body ng-controller="roundController">
+<div class="all_margins_d01">
+	<p></p>
+	<p>Insert a filter to show only those golf rounds matching with it:</p>
+	<p><input type="text" ng-model="filterstring"></p>
+	<p></p>
+	<table>
+		<tr style="width:100%">
+			<th>Nr</th>
+			<th>First name</th> 
+			<th>Surname</th> 
+			<th>Course</th> 
+			<th>Date</th> 
+			<th>Score</th> 
+			<th>BP</th>
+			</tr>
+		<tr ng-repeat="s in summary.data | filter:filterstring track by $index">
+			<td class="nr">{{summary.data.indexOf(s)+1}}</td>
+			<td class="text">{{s.Fname}}</td>
+			<td class="text">{{s.Surname}}</td>
+			<td class="text">{{s.Course}}</td>
+			<td class="nr">{{s.Date}}</td>
+			<td class="nr">{{s.Score}}</td>
+			<td class="nr">{{s.BP}}</td>
+			<td><button name="showPlayerRound"  ng-click="getNewScore(summary.data.indexOf(s), s.Pid, s.REid)" data-toggle="modal" data-target="#showC">Show score card</button>
+			</td>
+		</tr>
+	</table>
+</div> <!-- style=all_margins  -->
+	
+	<div class="modal fade" visible="showModal" id="showC">
+	<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title">Golf round of {{summary.data[ind].Fname}} in {{summary.data[ind].Date}}: </h3>
+        </div>
+        <div class="modal-body">
+          <p>Took place in {{summary.data[ind].Course}} with the following results.</p><br>
+		  
+	    <!-- This is the table header for scores -->
+		<table>
+			<tr style="width:100%">
+				<th>Firstname</th>
+				<th>Surname</th> 
+				<th>Date</th>
+				<th>Course</th>
+			</tr>
+			<tr>
+				<td class="txt">{{holescores.data[0].Fname}}
+				<td class="txt">{{holescores.data[0].Surname}}
+				<td class="date">{{holescores.data[0].Date}}
+				<td class="txt">{{holescores.data[0].Course}}
+			</tr>
+		</table>
+
+		<!-- This is the table for the scores -->
+		<table>
+		<br>
+			<tr style="width:100%">
+				<th>Hole</th>
+				<th>Par</th>
+				<th>HCP</th>
+				<th>Score</th>
+				<th>BP</th>
+				<th>Putts</th>
+				<th>FW</th>
+				<th>GH</th>
+			</tr>
+			<tr ng-repeat="score in holescores.data">
+				<td class="nr">{{score.Hole}}</td>
+				<td class="nr">{{score.Par}}</td>
+				<td class="nr">{{score.HCP}}</td>
+				<td class="nr">{{score.Score}}</td>
+				<td class="nr">{{score.BP}}</td>
+				<td class="nr">{{score.Putts}}
+				<td class="nr">{{score.fw}}
+				<td class="nr">{{score.gh}}
+				<!-- Remove the old modal buttons from the new modal window  
+				<td><button name="showScore" ng-click="toggleModal($index)" data-toggle="modal" data-target="#showC">Show</button>
+				 <button name="editScore">Edit</button>
+				</td> -->
+			</tr>
+		</table>
+		<br>
+		<p>  Total score: {{sumScore}}. Total bogey points: {{sumBP}}.</p>
+		<p>  Total putts: {{sumPutts}}. Fairway hits: {{sumFW}}. Green hits: {{sumGH}}</p>
+		  
+        </div> <!-- End of modal body -->
+
+		<div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+	</div>	<!-- End of modal -->
+</body>

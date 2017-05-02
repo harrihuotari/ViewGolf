@@ -1,0 +1,176 @@
+<style>
+table, th, td {
+	border: 1px solid black;
+	padding: 4px;
+}
+td.temp {
+	text-align: center
+}
+
+td.text {
+	text-align: left
+}
+
+td.date {
+	text-align: center
+}
+
+td.nr {
+	text-align: center
+}
+
+body {
+	background-image: url("golf-background2.jpg")
+}
+span.margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+p.p_margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+span.s01 {
+	background-color:#f1f8e9;
+    border-style: none;
+	max-width:100px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+	}
+
+div.d01 {
+	border-style: none;
+	background-color:#e8f5e9;
+    max-width:950px;
+	padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+	}
+	
+h3.h03 {
+	background-color:#f1f8e9;
+    border-style: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+	
+div.all_margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+h1 {
+    text-align: center;
+	display: inline;
+}
+h1 span {
+	background-color: #000000;
+}
+
+p.none {
+	border-style: none;
+}
+
+</style>
+<div class="all_margins">
+<body ng-controller="reController">
+  <div class="d01" ng-hide="hideEvents">
+	<p></p>
+	<p>Type a filter to show only those events matching:</p>
+	<p><input type="text" ng-model="filterstring"></p>
+	<!-- <button name="newEvent">Insert new event</button>  -->
+	<br>
+	<p></p>
+	<table>
+		<tr style="width:100%">
+			<th>Nr.</th>
+			<th>Event name</th>
+			<th>Date</th> 
+			<th>Temperature</th>
+			<th>Course</th>
+			<th>Abbr</th>
+			<th>Controls</th>
+		</tr>
+		<tr ng-repeat="event in roundevents.data | filter:filterstring">
+			<td class="nr">{{event.REid}}</td>
+			<td class="text">{{event.RoundName}}</td>
+			<td class="date">{{event.Date}}</td>
+			<td class="temp">{{event.Temperature}}</td>
+			<td class="text">{{event.Coursename}}</td>
+			<td class="text">{{event.Abbreviation}}</td>
+			<td><button name="showEvent" ng-click="toggleModal(roundevents.data.indexOf(event))" data-toggle="modal" data-target="#showC">Show</button>
+			<button name="editEvent" ng-click="editEvent(roundevents.data.indexOf(event))">Edit</button></td>
+			<!-- <button name="delEvent">Del</button> -->
+		</tr>
+	</table>
+  </div>
+  <div class="modal fade" visible="showModal" id="showC">
+	<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title">{{roundevents.data[ind].RoundName}}</h3>
+        </div>
+        <div class="modal-body">
+          <p>This event took place on {{roundevents.data[ind].Date}}.</p><br>
+		  <p>The venue of the event was {{roundevents.data[ind].Coursename}} ({{roundevents.data[ind].Abbreviation}}).</p><br>
+		  <p>The temperature was  {{roundevents.data[ind].Temperature}} degrees celcius.</p>
+		  <p>The % of rain was roughly {{roundevents.data[ind].Rain}}%.</p>
+		  <p>The % of sun was roughly {{roundevents.data[ind].Sun}}%.</p>
+		  <p>The wind speed was {{roundevents.data[ind].Wind}}m/s.</p>
+		  <p>The wind direction was {{roundevents.data[ind].WindDirection}}.</p>	  
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+  </div>	<!-- end of modal -->
+  </div>	<!-- end of all margins -->
+  <!-- editing of an event -->
+  <div class="all_margins "ng-hide="!hideEvents">
+	<table>
+		<tr style="width:100%">
+			<th>Item</th>
+			<th>Value</th>
+		</tr>
+		<tr>
+			<td class="text">Descripton of the round</td>
+			<td><input type="text" ng-model="selRoundName"></td>
+		</tr>
+		<tr>
+			<td class="text">Date</td>
+			<td><input type="text" ng-model="selDate"></td>
+		</tr>
+		<tr>
+			<td class="text">Temperature</td>
+			<td><input type="text" ng-model="selTemperature"></td>
+		</tr>
+		<tr>
+			<td class="text">Rain (%)</td>
+			<td><input type="text" ng-model="selRain"></td>
+		</tr>
+		<tr>
+			<td class="text">Sun (%)</td>
+			<td><input type="text" ng-model="selSun"></td>
+		</tr>
+		<tr>
+			<td class="text">Wind speed(number)</td>
+			<td><input type="text" ng-model="selWind"></td>
+		</tr>
+		<tr>
+			<td class="text">Wind direction (e.g. SW)</td>
+			<td><input type="text" ng-maxlength="2" ng-model="selWindDirection"></td>
+		</tr>
+	</table>
+	<p></p>
+	<button name="storeEventButton" ng-click="updateEvent(selRoundName, selDate, selTemperature, selRain, selSun, selWind, selWindDirection, selCourseid)">Store</button>
+	<button name="cancelEditingButton" ng-click="cancelEditing()">Cancel</button>
+
+  </div> <!-- end of editing event -->
+
+  </body>

@@ -1,0 +1,203 @@
+<style>
+table, th, td {
+	border: 1px solid black;
+	padding: 4px;
+}
+td.temp {
+	text-align: center
+}
+
+td.text {
+	text-align: left
+}
+
+td.date {
+	text-align: center
+}
+
+td.nr {
+	text-align: center
+}
+
+body {
+	background-image: url("golf-background2.jpg")
+}
+span.margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+p.p_margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+span.s01 {
+	background-color:#f1f8e9;
+    border-style: none;
+	max-width:100px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+	}
+
+div.d01 {
+	border-style: none;
+	background-color:#e8f5e9;
+    max-width:750px;
+	padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+	}
+	
+h3.h03 {
+	background-color:#f1f8e9;
+    border-style: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+	
+div.all_margins_d01 {
+	margin-left: 50px;
+	margin-bottom: 50px;
+	border-style: none;
+	background-color:#e8f5e9;
+    max-width:750px;
+	padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+
+div.all_margins_d02 {
+	margin-left: 50px;
+	margin-bottom: 50px;
+	border-style: none;
+	background-color:#e8f5e9;
+    max-width:400px;
+	padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+
+div.all_margins {
+	margin-left: 50px;
+	margin-bottom: 50px;
+}
+
+h1 {
+    text-align: center;
+	display: inline;
+}
+h1 span {
+	background-color: #000000;
+}
+
+p.none {
+	border-style: none;
+}
+
+
+</style>
+
+<body ng-controller="playerController">
+<div class="all_margins_d01">
+	<p></p>
+	<p>Type a filter word to select only those players matching:</p>
+	<p><input type="text" ng-model="filterstring"></p>
+	<p></p>
+	<table>
+		<tr style="width:100%">
+			<th>First name</th>
+			<th>Surname</th> 
+			<th>Sex</th>
+			<th>Home course</th>
+			<th>Handicap</th>
+			<th>email</th>
+			<th>Controls</th>
+		</tr>
+		<tr ng-repeat="player in players.data | filter:filterstring track by $index">
+			<td class="text">{{player.Fname}}</td>
+			<td class="text">{{player.Lname}}</td>
+			<td class="text">{{player.Sex}}</td>
+			<td class="text">{{player.Courseabbr}}</td>
+			<td class="text">{{player.Handicap}}</td>
+			<td class="text">{{player.email}}</td>
+			<td><button name="showPlayer" ng-click="toggleModal(players.data.indexOf(player))" data-toggle="modal" data-target="#showC">Show</button>
+			<button name="editPlayer" ng-click="editPlayer(player.Pid)">Edit</button>
+			<button name="delPlayer" ng-click="delPlayer(player.Pid)">Del</button></td>
+		</tr>
+	</table>
+	<p></p>
+	<p></p>
+
+	<!-- Update data on an existing player -->
+	<button ng-hide="inserting" name="loadPlayer" ng-click="startInserting()">Insert player</button>
+	</div> <!-- end of class=all_margins_d01 -->
+	<!-- Inserting or updating a player -->
+	<div class="all_margins_d02" ng-hide="hideVar">
+	<table ng-hide="hideVar">
+		<tr style="width:100%">
+			<th>Item</th>
+			<th>Value</th>
+		</tr>
+		<tr>
+			<td class="text">First name</td>
+			<td><input type="text" ng-model="Fname"></td>
+		</tr>
+		<tr>
+			<td class="text">Surname</td>
+			<td><input type="text" ng-model="Lname"></td>
+		</tr>
+		<tr>
+			<td class="text">Sex (M/F)</td>
+			<td><input type="text" ng-maxlength="2" ng-model="Sex"></td>
+		</tr>
+		<tr>
+			<td class="text">Course abbr.</td>
+			<td><input type="text" ng-model="Courseabbr"></td>
+		</tr>
+		<tr>
+			<td class="text">Handicap</td>
+			<td><input type="text" ng-model="Handicap"></td>
+		</tr>
+		<tr>
+			<td class="text">MobileNr</td>
+			<td><input ng-model="MobileNr"></td>
+		</tr>
+		<tr>
+			<td class="text">email</td>
+			<td><input type="email" ng-model="email"></td>
+		</tr>
+	</table>
+	<p></p>
+	<p>
+		<button ng-hide="!editing" name="updPlayer" ng-click="updatePlayer(Fname, Lname, Sex, Courseabbr, Handicap, MobileNr, email)">Update player</button>		
+		<button ng-hide="!inserting" name="newPlayer" ng-click="insertPlayer(Fname, Lname, Sex, Courseabbr, Handicap, MobileNr, email)">Add new player</button>
+		<button ng-hide="!change" name="canc" ng-click="initialize()">Cancel</button>
+	</p>
+	</div> <!-- end of class=all_margins_d02 -->
+	
+<!-- Modal window for showing a player details -->
+	<div class="modal fade" visible="showModal" id="showC">
+	<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title">{{players.data[ind].Fname}} {{players.data[ind].Lname}}</h3>
+        </div>
+        <div class="modal-body">
+          <p>This player's handicap is {{players.data[ind].Handicap}}.</p><br>
+		  <p>The home course is {{players.data[ind].Courseabbr}}.</p><br>
+		  <p>You can reach him/her from this email:{{players.data[ind].email}}.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+	</div>	
+</body>
